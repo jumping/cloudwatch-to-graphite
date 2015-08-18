@@ -1,0 +1,28 @@
+{# - config template for RDS -#}
+
+{%- set metrics =  {'CPUUtilization': {'stat': 'Average', 'unit': 'Percent'},
+                    'DatabaseConnections': {'stat': 'Average', 'unit': 'Count'},
+                    'FreeStorageSpace': {'stat': 'Average', 'unit': 'Bytes'},
+                    'FreeableMemory': {'stat': 'Average', 'unit': 'Bytes'},
+                    'WriteIOPS': {'stat': 'Average', 'unit': 'Count/Second'},
+                    'ReadIOPS': {'stat': 'Average', 'unit': 'Count/Second'},
+                    'SwapUsage': {'stat': 'Average', 'unit': 'Bytes'}
+                    } -%}
+Auth:
+  region: "{{ region }}"
+
+Metrics:
+{%- for rds in resources %}
+    {%- for metric in metrics %}
+- Namespace: "AWS/RDS"
+  MetricName: "{{ metric }}"
+  Statistics: 
+  - "{{ metrics[metric]['stat'] }}"
+  Unit: "{{ metrics[metric]['unit'] }}"
+  Dimensions:
+    DBInstanceIdentifier: "{{ rds.DBName }}"
+  Options:
+    Formatter: 'cloudwatch.%(Namespace)s.{{ rds.DBName }}.%(MetricName)s.%(statistic)s.%(Unit)s'
+    Period: 5
+    {%- endfor %}
+{%- endfor %}

@@ -20,9 +20,9 @@ Metrics:
   - "{{ metrics[metric]['stat'] }}"
   Unit: "{{ metrics[metric]['unit'] }}"
   Dimensions:
-    DBInstanceIdentifier: "{{ rds.DBName }}"
+    DBInstanceIdentifier: "{{ rds.id }}"
   Options:
-    Formatter: 'cloudwatch.%(Namespace)s.{{ rds.DBName }}.%(MetricName)s.%(statistic)s.%(Unit)s'
+    Formatter: 'cloudwatch.%(Namespace)s.{{ rds.id }}.%(MetricName)s.%(statistic)s.%(Unit)s'
     Period: 5
     {%- endfor %}
 {%- endfor %}
